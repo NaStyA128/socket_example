@@ -11,7 +11,7 @@ def form(env):
     cl = int(env.get('CONTENT_LENGTH', '0'))
     d = env['wsgi.input'].read(cl)
     d = parse_qs(d)
-    return [d.get('a', '1').encode('UTF-8')]
+    return d.get(b'a', b'1')[0]
 
 route = {'form': form}
 
@@ -21,7 +21,6 @@ def app(env, resp_start):
     # 1 - все переменные окружения, доп. пар-ры запроса; 2 -
 
     resp_start('200 OK', [('Content-Type', 'text/html')])
-    # buf = ['%s: %s' % (k, v) for k, v in env.iteritems()]
     buf = [('%s: %s <br />' % (k, v)).encode('UTF-8')
            for k, v in env.items()]
 
@@ -32,12 +31,13 @@ def app(env, resp_start):
     parts = path.split('/')
     print(parts[0])
     result = None
+    result = [b'']
     if len(parts) > 0 and parts[0]:
         fn = route.get(parts[0])
         if fn is not None:
             result = fn(env)
-            # with open('index.html', 'r') as f:
-            #     result = [(f.read() % (result,)).encode('UTF-8')]
+            with open('index.html', 'r') as f:
+                result = [(f.read() % (result,)).encode('UTF-8')]
     else:
         with open('index.html', 'r') as f:
             result = [(f.read() % (qs.get('a'),)).encode('UTF-8')]
@@ -47,7 +47,7 @@ def app(env, resp_start):
 
 if __name__ == '__main__':
     # 1 - host (по умолч. - localhost), 2 - port, 3 - application
-    serv = make_server('', 8080, app)
+    serv = make_server('', 8081, app)
     serv.serve_forever()
 
     # нам нужны (в основном):
