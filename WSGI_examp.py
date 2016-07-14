@@ -45,10 +45,10 @@ def app(env, resp_start):
     return result
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # 1 - host (по умолч. - localhost), 2 - port, 3 - application
-    serv = make_server('', 8081, app)
-    serv.serve_forever()
+    # serv = make_server('', 8081, app)
+    # serv.serve_forever()
 
     # нам нужны (в основном):
     # QUERY_STRING - параметры в ссылке ?a=1&b=2
